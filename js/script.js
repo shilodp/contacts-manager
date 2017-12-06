@@ -26,11 +26,77 @@
 		tagName: "article",
 		className: "contact-container",
 		template: $("#contactTemplate").html(),
-	 
+		editTemplate: _.template($("#changeContactTemplate").html()),
+  
 		render: function () {
 			var tmpl = _.template(this.template);
 			this.$el.html(tmpl(this.model.toJSON()));
 			return this;
+		},
+		
+		events: {
+			"click #delete": "deleteContact",
+			"click #change": "editContact",
+			"click #saveChanges": "saveEdits",
+			"click #cancelChanges": "cancelEdit"
+		},
+		
+		deleteContact: function () {
+			var removedDepartment = this.model.get("department").toLowerCase();
+			var removedPosition = this.model.get("position").toLowerCase();
+			this.model.collection.remove(this.model);
+		},
+		
+		editContact: function () {
+			this.$el.html(this.editTemplate(this.model.toJSON()));
+		},
+		
+		saveEdits: function (e) {
+			e.preventDefault();
+			
+			if (!this.$el.find('#changeName').val()) {
+				return this.$el.find('#changeName').attr("placeholder","Не указано имя")
+			}
+			if (!this.$el.find('#changeDepartment').val()) {
+				return this.$el.find('#changeDepartment').attr("placeholder","Не указан отдел")
+			}
+			if (!this.$el.find('#changePosition').val()) {
+				return this.$el.find('#changePosition').attr("placeholder","Не указана должность")
+			}
+			if (!this.$el.find('#changeTel').val()) {
+				return this.$el.find('#changeTel').attr("placeholder","Не указан телефон")
+			}
+			if (!this.$el.find('#changeEmail').val()) {
+				return this.$el.find('#changeEmail').attr("placeholder","Не указан e-mail")
+			}
+		 
+			var formData = {};
+			formData.id=this.$el.find('#forId').val();
+			formData.name=$('#changeName').val();
+			formData.department=this.$el.find('#changeDepartment').val();
+			formData.position=this.$el.find('#changePosition').val();
+			formData.tel=this.$el.find('#changeTel').val();
+			formData.email=this.$el.find('#changeEmail').val();
+			
+			
+			
+			
+			var prev = this.model.previousAttributes();
+			delete prev.photo;
+			
+			this.model.set(formData);
+		 
+			this.render();
+		 
+			_.each(contacts, function (contact) {
+				if (_.isEqual(contact, prev)) {
+					contacts.splice(_.indexOf(contacts, contact), 1, formData);
+				}
+			});
+		},
+		
+		cancelEdit: function () {
+			this.render();
 		}
 	});
 	
@@ -45,6 +111,7 @@
 			this.on("change:filterType", this.filterByFilter, this);
 			this.collection.on("reset", this.render, this);
 			this.collection.on("add", this.renderContact, this);
+			this.collection.on("remove", this.removeContact, this);
 		},
 	 
 		render: function () {
@@ -109,8 +176,7 @@
 		"click #switch": "secondScreen",
 		"click #cancel": "switchScreen",
 		"click #add": "addNew",
-		"click #delete": "deleteContact",
-		"click #change": "changeContact"
+		"click #saveChanges": "saveChanges"
 		},
 		
 		secondScreen: function () {
@@ -155,6 +221,7 @@
 			newModel.position=this.$el.find('#addPosition').val();
 			newModel.tel=this.$el.find('#addTel').val();
 			newModel.email=this.$el.find('#addEmail').val();
+			newModel.id=this.collection.isEmpty()? 1 : (_.max(this.collection.pluck('id'))+1)
 			contacts.push(newModel);
 			if (_.indexOf(this.getDepartment(), newModel.department) === -1) {
 				if (_.indexOf(this.getPosition(), newModel.position) === -1) {	
@@ -180,7 +247,29 @@
 					//Не отдел и не должность
 					this.collection.add(new Contact(newModel));
 				}
-			}
+			};
+			this.switchScreen();
+			this.filterDepartment = "Все";
+			this.filterPosition = "Все";
+			this.trigger("change:filterType");
+		},
+		
+		removeContact: function (removedModel) {
+			var removed = removedModel.attributes;
+			delete removed.photo;
+			_.each(contacts, function (contact) {
+				if (_.isEqual(contact, removed)) {
+					contacts.splice(_.indexOf(contacts, contact), 1);
+				}
+			});
+			this.$el.find("#filterDepartment").find("select").remove();
+			this.$el.find("#filterDepartment").append(this.createDepartmentSelect());
+			this.$el.find("#filterPosition").find("select").remove();
+			this.$el.find("#filterPosition").append(this.createPositionSelect());
+			this.filterDepartment = "Все";
+			this.filterPosition = "Все";
+			this.trigger("change:filterType");
+			
 		},
 		
 		setDepartmentFilter: function (e) {
@@ -198,7 +287,7 @@
 				if (this.filterPosition === "Все") {
 					//Все отделы и все должности
 					this.collection.reset(contacts);
-					contactsRouter.navigate("filterDepartment/Все/filterPosition/Все");
+					contactsRouter.navigate("filterDepartment=Все/filterPosition=Все");
 				}
 				else {
 					// Все отделы, не все должности
@@ -208,7 +297,7 @@
 						return item.get("position").toLowerCase() === filterType;
 					});
 					this.collection.reset(filtered);
-					contactsRouter.navigate("filterPosition/" + filterType);
+					contactsRouter.navigate("filterPosition=" + filterType);
 				};
 			}
 			else {
@@ -220,7 +309,7 @@
 						return item.get("department").toLowerCase() === filterType;
 					});
 					this.collection.reset(filtered);
-					contactsRouter.navigate("filterDepartment/" + filterType);					
+					contactsRouter.navigate("filterDepartment=" + filterType);					
 				}
 				else {
 					//Не все отделы и не все должности
@@ -234,7 +323,7 @@
 						return item.get("position").toLowerCase() === filterType;
 					});
 					this.collection.reset(filtered);
-					contactsRouter.navigate("filterDepartment/" + this.filterDepartment +"/filterPosition/"+filterType);	
+					contactsRouter.navigate("filterDepartment=" + this.filterDepartment +"/filterPosition="+filterType);	
 				}
 			}
 		}
@@ -243,9 +332,9 @@
 	var ContactsRouter = Backbone.Router.extend({
 		routes: {
 			"":"urlFilter",
-			"filterDepartment/:department": "urlFilterDepartment",
-			"filterPosition/:filters": "urlFilterPosition",
-			"filterDepartment/:department/filterPosition/:position": "urlFilter"
+			"filterDepartment=:department": "urlFilterDepartment",
+			"filterPosition=:filters": "urlFilterPosition",
+			"filterDepartment=:department/filterPosition=:position": "urlFilter"
 		},
 	 
 		urlFilterDepartment: function (department) {

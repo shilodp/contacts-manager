@@ -1,0 +1,99 @@
+html {
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(lightskyblue), to(deepskyblue));
+    display: flex;
+    width:90vw;
+	min-height: 100vh;
+	flex-direction: column;
+}
+body {
+    display: flex;
+    width:90vw;
+    margin: 0;
+    padding: 0;
+}
+p {
+    padding: 0;
+    margin: 0;
+}
+#contacts {
+    display: flex;
+    flex-direction: row;
+    width:90vw;
+    flex-wrap: wrap;
+}
+#contacts header{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width:90vw;
+    margin: 15px;
+}
+#addContact{
+    top: 0;
+    position: fixed;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(lightgray));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#addContact label{
+    margin-top:10px;
+}
+#addContact input {
+    width: 50vw;
+    height: 5vh;
+    text-align: center;
+}
+#addContact button{
+    margin-top:10px;
+}
+#changeContact{
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(lightgray));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#changeContact label{
+    margin-top:10px;
+}
+#changeContact input {
+    width: 50vw;
+    height: 5vh;
+    text-align: center;
+}
+#changeContact button{
+    margin-top:10px;
+}
+.contact-container {
+    background: white;
+    width: 25vw;
+    border: solid black 1px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    margin: 10px;
+    padding: 5px 10px;
+}
+.contact-container img {
+    align-self: center;
+}
+.contact-container .buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}

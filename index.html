@@ -3,38 +3,51 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-    <title>Данные сотрудников</title>
-    <link href="css/style.css" rel="stylesheet">
+		<title>Данные сотрудников</title>
+		<link href="css/style.css" rel="stylesheet">
     </head>
     <body>
 	<div id="contacts">
-	<header>
-		<div id="filterDepartment"><label>Отдел:</label></div>
-		<div id="filterPosition"><label>Должность:</label></div>
-	</header>
-	<button id="switch">Добавить нового сотрудника</button>
-	<form id="addContact" style="display:none">
-		<label for="addName">Полное имя:</label><input id="addName" />
-		<label for="addDepartment">Отдел:</label><input id="addDepartment"/>
-		<label for="addPosition">Должность:</label><input id="addPosition" />
-		<label for="addTel">Контактный телефон:</label><input id="addTel" />
-		<label for="addEmail">Контактный e-mail:</label><input id="addEmail" />
-		<button id="add">Добавить</button>
-		<button id="cancel">Отмена</button>
-	</form>
-	</div>
+		<header>
+			<div id="filterDepartment"><label>Отдел:</label></div>
+			<div id="filterPosition"><label>Должность:</label></div>
+			<button id="switch">Добавить нового сотрудника</button>
+		</header>
+		<form id="addContact" style="display:none">
+			<h1>Добавить нового сотрудника</h1>
+			<label for="addName">Полное имя:</label><input id="addName" />
+			<label for="addDepartment">Отдел:</label><input id="addDepartment"/>
+			<label for="addPosition">Должность:</label><input id="addPosition" />
+			<label for="addTel">Контактный телефон:</label><input id="addTel" />
+			<label for="addEmail">Контактный e-mail:</label><input id="addEmail" />
+			<button id="add">Добавить</button>
+			<button id="cancel">Отмена</button>
+		</form>
+	<script id="changeContactTemplate" type="text/template">
+		<form id="changeContact">
+			<h1>Редактировать данные сотрудника</h1>
+			<input id="forId" style="display:none"/>
+			<label for="changeName">Полное имя:</label><input id="changeName" value="<%= name %>"/>
+			<label for="changeDepartment">Отдел:</label><input id="changeDepartment" value="<%= department %>"/>
+			<label for="changePosition">Должность:</label><input id="changePosition" value="<%= position %>"/>
+			<label for="changeTel">Контактный телефон:</label><input id="changeTel" value="<%= tel %>"/>
+			<label for="changeEmail">Контактный e-mail:</label><input id="changeEmail" value="<%= email %>"/>
+			<button id="saveChanges">Сохранить</button>
+			<button id="cancelChanges">Отмена</button>
+		</form>
+	</script>
 	<script id="contactTemplate" type="text/template">
-    <img src="img/<%= photo %>" onerror="this.src='img/placeholder.png'" alt="<%= name %>" />
-    <h1><%= name %></h1>
-    <div><%= department %></div>
-    <div><%= position %></div>
-    <dl>
-        <dt>Tel:</dt><dd><%= tel %></dd>
-        <dt>Email:</dt><dd><a href="mailto:<%= email %>"><%= email %></a></dd>
-    </dl>
-	<button id="change">Редактировать</button>
-	<button id="delete">Удалить</button>
-</script>
+		<img src="img/<%= photo %>" onerror="this.src='img/placeholder.png'" alt="<%= name %>" />
+		<h1><%= name %></h1>
+		<div><p>Отдел: <%= department %></p></div>
+		<div><p>Должность: <%= position %></p></div>
+        <div><p>Контактный номер: <%= tel %></p></div>
+        <div><p>Контактный e-mail: <a href="mailto:<%= email %>"><%= email %></a></p></div>
+		<div class="buttons">
+			<button id="change">Редактировать</button>
+			<button id="delete">Удалить</button>
+		</div>
+	</script>
 	<script src="js/jquery.js"></script>
 	<script src="js/underscore.js"></script>
 	<script src="js/backbone.js"></script>
