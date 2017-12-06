@@ -12,8 +12,29 @@ body {
     padding: 0;
 }
 p {
+	font-family: Calibri, serif;
     padding: 0;
     margin: 0;
+}
+h1 {
+	font-family: Calibri, serif;
+}
+button {
+	font-family: Calibri, serif;
+	border-radius: 13px;
+	border-width: 1px;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(lightgray));
+}
+input {
+	font-family: Calibri, serif;
+}
+select {
+	border-radius: 13px;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(lightskyblue), to(white));
+	margin: 0 5px;
+}
+option {
+	font-family: Calibri, serif;
 }
 #contacts {
     display: flex;

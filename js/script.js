@@ -49,6 +49,7 @@
 		
 		editContact: function () {
 			this.$el.html(this.editTemplate(this.model.toJSON()));
+			contactsRouter.navigate("editContact");
 		},
 		
 		saveEdits: function (e) {
@@ -90,10 +91,18 @@
 				if (_.isEqual(contact, prev)) {
 					contacts.splice(_.indexOf(contacts, contact), 1, formData);
 				}
+			directory.filterDepartment='Все';
+			directory.filterPosition='Все';
+			directory.filterByFilter();
+			contactsRouter.navigate("filterDepartment=" + directory.filterDepartment +"/filterPosition="+directory.filterPosition);
 			});
 		},
 		
 		cancelEdit: function () {
+			directory.filterDepartment='Все';
+			directory.filterPosition='Все';
+			directory.filterByFilter();
+			contactsRouter.navigate("filterDepartment=" + directory.filterDepartment +"/filterPosition="+directory.filterPosition);
 			this.render();
 		}
 	});
@@ -180,6 +189,7 @@
 		
 		secondScreen: function () {
 			this.$el.find('#addContact').show();
+			contactsRouter.navigate("addContact");
 		},
 		
 		switchScreen: function () {
@@ -194,6 +204,8 @@
 			this.$el.find('#addTel').attr("placeholder","");
 			this.$el.find('#addEmail').attr("placeholder","");
 			this.$el.find('#addContact').hide();
+			this.filterByFilter();
+			contactsRouter.navigate("filterDepartment=" + this.filterDepartment +"/filterPosition="+this.filterPosition);
 		},
 		
 		addNew: function (e) {
@@ -344,25 +356,34 @@
 	var ContactsRouter = Backbone.Router.extend({
 		routes: {
 			"":"urlFilter",
+			"editContact":"urlFilter",
 			"filterDepartment=:department": "urlFilterDepartment",
 			"filterPosition=:filters": "urlFilterPosition",
-			"filterDepartment=:department/filterPosition=:position": "urlFilter"
+			"filterDepartment=:department/filterPosition=:position": "urlFilter",
+			"addContact": "urlAddContact",
+			"filterPosition=:filters": "urlFilterPosition"
 		},
 	 
 		urlFilterDepartment: function (department) {
+			directory.switchScreen();
 			directory.filterDepartment = department;
 			directory.filterPosition = "Все";
 			directory.trigger("change:filterType");
 		},
 		urlFilterPosition: function (position) {
+			directory.switchScreen();
 			directory.filterDepartment = "Все";
 			directory.filterPosition = position;
 			directory.trigger("change:filterType");
 		},
 		urlFilter: function (department,position) {
+			directory.switchScreen();
 			directory.filterDepartment = department||"Все";
 			directory.filterPosition = position||"Все";
 			directory.trigger("change:filterType");
+		},
+		urlAddContact: function () {
+			directory.secondScreen()
 		}	
 	});
 
