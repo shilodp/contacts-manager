@@ -204,6 +204,8 @@
 			this.$el.find('#addTel').attr("placeholder","");
 			this.$el.find('#addEmail').attr("placeholder","");
 			this.$el.find('#addContact').hide();
+			this.filterDepartment="Все";
+			this.filterPosition="Все";
 			this.filterByFilter();
 			contactsRouter.navigate("filterDepartment=" + this.filterDepartment +"/filterPosition="+this.filterPosition);
 		},
