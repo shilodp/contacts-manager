@@ -71,15 +71,13 @@
 			}
 		 
 			var formData = {};
-			formData.id=this.$el.find('#forId').val();
+			formData.id=this.model.id;
 			formData.name=$('#changeName').val();
 			formData.department=this.$el.find('#changeDepartment').val();
 			formData.position=this.$el.find('#changePosition').val();
 			formData.tel=this.$el.find('#changeTel').val();
 			formData.email=this.$el.find('#changeEmail').val();
-			
-			
-			
+			formData.photo=(formData.id+'.jpg');
 			
 			var prev = this.model.previousAttributes();
 			delete prev.photo;
@@ -112,6 +110,7 @@
 			this.collection.on("reset", this.render, this);
 			this.collection.on("add", this.renderContact, this);
 			this.collection.on("remove", this.removeContact, this);
+			this.collection.on("change", this.updateSelect, this);
 		},
 	 
 		render: function () {
@@ -252,6 +251,7 @@
 			this.filterDepartment = "Все";
 			this.filterPosition = "Все";
 			this.trigger("change:filterType");
+			this.updateSelect();
 		},
 		
 		removeContact: function (removedModel) {
@@ -279,6 +279,16 @@
 		
 		setPositionFilter: function (e) {
 			this.filterPosition = e.currentTarget.value;
+			this.trigger("change:filterType");
+		},
+		
+		updateSelect: function () {
+			this.$el.find("#filterDepartment").find("select").remove();
+			this.$el.find("#filterDepartment").append(this.createDepartmentSelect());
+			this.$el.find("#filterPosition").find("select").remove();
+			this.$el.find("#filterPosition").append(this.createPositionSelect());
+			this.filterDepartment = "Все";
+			this.filterPosition = "Все";
 			this.trigger("change:filterType");
 		},
 		
@@ -328,6 +338,8 @@
 			}
 		}
 	});
+	
+	
 	
 	var ContactsRouter = Backbone.Router.extend({
 		routes: {
